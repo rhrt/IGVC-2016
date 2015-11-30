@@ -1,0 +1,10 @@
+global_costmap:
+  global_frame: world
+  robot_base_frame: base_footprint
+  width: 50
+  height: 50
+  origin_x: -25
+  origin_y: -25
+  update_frequency: 5.0
+  static_map: true
+rolling_window: true

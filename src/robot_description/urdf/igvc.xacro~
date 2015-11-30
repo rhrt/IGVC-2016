@@ -1,0 +1,324 @@
+<?xml version="1.0"?> <!-- name="visual"-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="igvc">
+
+<property name="mb_pi" value="3.14159265" />
+
+<xacro:property name="chassis_sx" value="0.9100"/>
+<xacro:property name="chassis_sy" value="0.600"/>
+<xacro:property name="chassis_sz" value="0.5800"/>
+<property name="chassis_mass" value="20"/>
+
+<property name="wheel_radius" value=".1"/>
+<property name="wheel_width" value=".05"/>
+<property name="wheel_mass" value="1"/>
+
+<property name="wheel_joint_urdf_max_effort" value="100.0"/>
+<property name="wheel_joint_urdf_max_velocity" value="100.0"/>
+<property name="wheel_joint_urdf_damping" value="0.0"/>
+<property name="wheel_joint_urdf_friction" value="0.0"/>
+<property name="wheel_joint_sdf_damping" value="0.0" />
+<property name="wheel_joint_sdf_friction" value="0.0" />
+<property name="wheel_mechanical_reduction" value="10" />
+
+
+  <property name="roller_height" value="0.0470" /> <!-- 1.853" on plans -->
+  <property name="roller_radius" value="0.0758" /> <!-- 5.976" diameter on plans -->
+  <property name="roller_mass" value="0.9072" /> <!-- 2lbs on plans -->
+
+<property name="roller_joint_urdf_max_effort" value="100.0"/>
+<property name="roller_joint_urdf_max_velocity" value="100.0"/>
+<property name="roller_joint_urdf_damping" value="0.0"/>
+<property name="roller_joint_urdf_friction" value="0.0"/>
+<property name="roller_joint_sdf_damping" value="0.0" />
+<property name="roller_joint_sdf_friction" value="0.0" />
+  <property name="roller_link_sdf_mu" value="1.0" /> <!-- was 0.2 -->
+  <property name="roller_link_sdf_kp" value="1000000.0" /> <!-- kp and kd were 1e6 and 100 (these used to be values for rubber) -->
+  <property name="roller_link_sdf_kd" value="100.0" />
+
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- Macros definition. -->
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+  <xacro:macro name="box_inertia" params="sizeX sizeY sizeZ mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <insert_block name="origin" />
+      <inertia ixx="${mass / 12 * (sizeY * sizeY + sizeZ * sizeZ)}" ixy="0.0" ixz="0.0"
+               iyy="${mass / 12 * (sizeX * sizeX + sizeZ * sizeZ)}" iyz="0.0"
+               izz="${mass / 12 * (sizeX * sizeX + sizeY * sizeY)}" />
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="radius height mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <insert_block name="origin" />
+      <inertia ixx="${0.0833333 * mass * (3 * radius * radius + height * height)}" ixy="0.0" ixz="0.0"
+               iyy="${0.0833333 * mass * (3 * radius * radius + height * height)}" iyz="0.0"
+               izz="${0.5 * mass * radius * radius}" />
+    </inertial>
+  </xacro:macro>
+
+  <material name="blue">
+    <color rgba="0 0 .8 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- Wheel definition. -->
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<xacro:macro name="robot_wheel" params="fb lr parent sideX sideY sideZ">
+
+  <joint name="${fb}_${lr}_wheel_joint" type="continuous">
+    <axis xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="${fb}_${lr}_wheel"/>
+    <origin rpy="0 0 0" xyz="${sideX} ${sideY} ${sideZ}"/><!-- "0.133333333333 0 -0.085   -.19"-->
+    <limit effort="${roller_joint_urdf_max_effort}" velocity="${roller_joint_urdf_max_velocity}"/>
+    <dynamics damping="${roller_joint_urdf_damping}" friction="${roller_joint_urdf_friction}"/>
+  </joint>
+
+  <link name="${fb}_${lr}_wheel">
+    <collision>
+      <origin rpy="1.57075 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="1.57075 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.1"/>
+      </geometry>
+      <material name="white"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <xacro:cylinder_inertia radius="${wheel_radius}" height="${wheel_width}" mass="${wheel_mass}">
+      <origin xyz="0.0 0.0 0.0" rpy="${mb_pi / 2.0} 0.0 0.0" />
+    </xacro:cylinder_inertia>
+  </link>
+  
+  <gazebo reference="${fb}_${lr}_wheel_joint">
+    <dynamics damping="${roller_joint_sdf_damping}" friction="${roller_joint_sdf_friction}"/>
+  </gazebo>
+  <gazebo reference="${fb}_${lr}_wheel">
+    <selfCollide>false</selfCollide>
+    <static>false</static>
+    <turnGravityOff>false</turnGravityOff>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <joint name="${fb}_${lr}_roller_joint" type="continuous">
+      <parent link="${fb}_${lr}_wheel" />
+      <child link = "${fb}_${lr}_roller" />
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      <axis xyz="${-(sideX * sideY)} 1.0 0.0" />
+      <limit effort="${roller_joint_urdf_max_effort}" velocity="${roller_joint_urdf_max_velocity}"/>
+      <dynamics damping="${roller_joint_urdf_damping}" friction="${roller_joint_urdf_friction}"/>
+    </joint>
+    <gazebo reference="${fb}_${lr}_roller_joint">
+      <dynamics damping="${roller_joint_sdf_damping}" friction="${roller_joint_sdf_friction}"/>
+    </gazebo>
+  
+    <link name="${fb}_${lr}_roller" >
+      <collision>
+        <geometry>
+          <sphere radius="${roller_radius}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      </collision>
+      <xacro:cylinder_inertia radius="${roller_radius}" height="${roller_height}" mass="${roller_mass}">
+        <origin xyz="0.0 0.0 0.0" rpy="${mb_pi / 2.0} 0.0 0.0" />
+      </xacro:cylinder_inertia>
+    </link>
+    <gazebo reference="${fb}_${lr}_roller">
+      <selfCollide>false</selfCollide>
+      <static>false</static>
+      <turnGravityOff>false</turnGravityOff>
+      <kp>${roller_link_sdf_kp}</kp>
+      <kd>${roller_link_sdf_kd}</kd>
+      <mu1>${roller_link_sdf_mu}</mu1>
+      <mu2>${roller_link_sdf_mu}</mu2>
+      <fdir1>0 1 0</fdir1>
+      <maxVel>10.0</maxVel>
+      <minDepth>0.00</minDepth>
+    </gazebo>
+
+    <transmission name="${fb}_${lr}_wheel_transmission">
+	<type>transmission_interface/SimpleTransmission</type>
+	<actuator name="wheel_motor_fl" />
+	<joint name="${fb}_${lr}_wheel_joint" />
+	<mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
+    </transmission>
+
+</xacro:macro>
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- Robot definition. -->
+  <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+  <link name="base_footprint">
+    <inertial>
+      <mass value="0.0001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+          iyy="0.0001" iyz="0.0" 
+          izz="0.0001" />
+    </inertial>
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <box size="0.001 0.001 0.001" />
+        </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 ${-wheel_radius - .24}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="base_footprint" />
+  </joint>
+
+  <link name="base_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_sx} ${chassis_sy} ${chassis_sz}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <geometry>
+        <box size="${chassis_sx} ${chassis_sy} ${chassis_sz}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+
+    
+
+    
+    <xacro:box_inertia sizeX="${chassis_sx}" sizeY="${chassis_sy}" sizeZ="${chassis_sz}" mass="${chassis_mass}"> 
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </xacro:box_inertia>
+
+  </link>
+
+  <link name="camera_pole">
+    <collision>
+      <origin xyz=".43 0 .62" rpy="0 0 0"/>
+      <geometry>
+        <box size=".05 .1 .66"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin rpy="0 0 0 " xyz=".43 0 .62"/>
+      <geometry>
+        <box size=".05 .1 .66"/>
+      </geometry>
+      <material name="black"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+  </link >
+
+  <joint name="camera_pole_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_pole"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="camera_pole"/>
+    <child link="testKinect"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="testKinect">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size=".05 .3 .1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin rpy="0 0 0 " xyz=".43 0 .62"/>
+      <geometry>
+        <box size=".05 .1 .66"/>
+      </geometry>
+      <material name="black"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+  </link >
+
+  
+
+
+<!-- joint name="${fb}_${lr}_roller_joint" type="continuous">
+  <parent link="${fb}_${lr}_wheel"/>
+  <child link="${fb}_${lr}_roller"/>
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  <axis xyz="${-(sideX * sideY)} 1.0 0.0"/>
+
+</joint -->
+
+
+
+  <joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz=".6 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="hokuyo_link"/>
+  </joint>
+
+  <!-- Hokuyo Laser -->
+  <link name="hokuyo_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/blanknc/igvc_ws/src/robot_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <include filename="igvc.gazebo" />
+
+  <xacro:robot_wheel fb="front" lr="left" parent="base_link" sideX="0.33" sideY="0.325" sideZ="-.24" />
+  <xacro:robot_wheel fb="back" lr="left" parent="base_link" sideX="-0.33" sideY="0.325" sideZ="-.24" />
+  <xacro:robot_wheel fb="back" lr="right" parent="base_link" sideX="0.33" sideY="-0.325" sideZ="-.24" />
+  <xacro:robot_wheel fb="front" lr="right" parent="base_link" sideX="-0.33" sideY="-0.325" sideZ="-.24" />
+
+<gazebo>
+      <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <odometryRate>20.0</odometryRate>
+        <robotBaseFrame>base_footprint</robotBaseFrame>
+      </plugin>
+    </gazebo>
+
+</robot>
+	
+
