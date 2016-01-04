@@ -4,7 +4,6 @@ import struct
 import time
 
 _trystimeout = 3
-
 #Command Enums
 
 class Cmd():
