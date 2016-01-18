@@ -1,0 +1,9 @@
+<launch>
+  <node name="joy_node" pkg="joy" type="joy_node" />
+  <arg name="joy_config" value="ps3-holonomic" />
+  <node name="teleop_twist_joy" pkg="teleop_twist_joy" type="teleop_node" >
+	<rosparam command="load" file="$(find teleop_twist_joy)/config/$(arg joy_config).config.yaml" />
+  </node>
+  <node name="motor_controller_test" pkg="motor_controller_test" type="joyDrive.py" output="screen">
+ </node>
+</launch>
