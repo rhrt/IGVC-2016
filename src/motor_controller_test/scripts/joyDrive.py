@@ -9,24 +9,22 @@ from std_msgs.msg import String
 
 def velCallback(cmd_vel):
     CONVERSION = 60000 # Conversion factor from the -1...1 input to the total velocity
-    ANGLE_DIM = 0.1 # Conversion factor to make the twists solwer
-    netVel = (cmd_vel.linear.x**2 + cmd_vel.linear.y**2)**0.5
-    angle = atan2(cmd_vel.linear.y, cmd_vel.linear.x)
+    ANGLE_DIM = 0.3 # Conversion factor to make the twists solwer
 
     roboclaw.Open("/dev/ttyACM0", 115200)
-    roboclaw.SpeedM1(FLeftAddress, int(-1 * CONVERSION * (netVel * cos(angle + pi/4) - cmd_vel.angular.z * ANGLE_DIM)))
+    roboclaw.SpeedM1(FLeftAddress, int(CONVERSION * (cmd_vel.linear.y + cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5))))
     roboclaw.Open("/dev/ttyACM1", 115200)
-    roboclaw.SpeedM1(FRightAddress, int(CONVERSION * (netVel * sin(angle + pi/4) + cmd_vel.angular.z * ANGLE_DIM)))
+    roboclaw.SpeedM1(FRightAddress, int(CONVERSION * (cmd_vel.linear.y - cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5))))
     roboclaw.Open("/dev/ttyACM2", 115200)
-    roboclaw.SpeedM1(BRightAddress, int(CONVERSION * (netVel * cos(angle + pi/4) + cmd_vel.angular.z * ANGLE_DIM)))
-    roboclaw.SpeedM2(BLeftAddress, int(-1 * CONVERSION * (netVel * sin(angle + pi/4) - cmd_vel.angular.z * ANGLE_DIM)))
+    roboclaw.SpeedM1(BRightAddress, int(CONVERSION * (cmd_vel.linear.y - cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5))))
+    roboclaw.SpeedM2(BLeftAddress, int(CONVERSION * (cmd_vel.linear.y + cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5))))
 
     # Print speeds of motors
     rospy.loginfo("-----------------------------------")
-    rospy.loginfo("Front right " + str(int(CONVERSION * (netVel * sin(angle + pi/4) + cmd_vel.angular.z))))
-    rospy.loginfo("Front left " + str(int(CONVERSION * (netVel * cos(angle + pi/4) - cmd_vel.angular.z))))
-    rospy.loginfo("Back right " + str(int(CONVERSION * (netVel * cos(angle + pi/4) + cmd_vel.angular.z))))
-    rospy.loginfo("Back left " + str(int(CONVERSION * (netVel * sin(angle + pi/4) - cmd_vel.angular.z))))
+    rospy.loginfo("Front right " + str(int(CONVERSION * (cmd_vel.linear.y - cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5)))))
+    rospy.loginfo("Front left " + str(int(CONVERSION * (cmd_vel.linear.y + cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5)))))
+    rospy.loginfo("Back right " + str(int(CONVERSION * (cmd_vel.linear.y - cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5)))))
+    rospy.loginfo("Back left " + str(int(CONVERSION * (cmd_vel.linear.y + cmd.vel.linear.x) / ((cmd_vel.linear.y**2 + cmd_vel.linear.x**2)**(0.5)))))
 
 def joyCallback(joy):
     #Left in here only for testing
