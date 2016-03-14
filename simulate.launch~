@@ -9,17 +9,16 @@
     <arg name="paused" value="$(arg paused)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />    
-    <arg name="use_sim_time" value="false" />
+    <arg name="use_sim_time" value="true" />
     <arg name="headless" value="false" />
   </include>	
   <!-- urdf xml robot description loaded on the Parameter Server-->
   <!--param name="robot_description" command="$(find xacro)/xacro.py '$(find robot_description)/urdf/igvc.xacro'" /-->
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find robot_description)/urdf/igvc.xacro'" />
   <!--node name="odomlink" pkg="tf" type="static_transform_publisher" args=" 0 0 0 0 0 0 map world 50"/-->
-  <!-- <node name="odomlink" pkg="tf" type="static_transform_publisher" args=" 0 0 0 0 0 0 odom base_footprint 50"/> -->
-
   <node name="igvc_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
     args="-urdf -param robot_description -model labrob" />
+
   <node name="joy_node" pkg="joy" type="joy_node"/>
   <arg name="joy_config" value="ps3-holonomic" />
   <node name="teleop_twist_joy" pkg="teleop_twist_joy" type="teleop_node" >

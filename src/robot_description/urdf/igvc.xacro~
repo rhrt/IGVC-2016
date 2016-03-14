@@ -292,7 +292,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/blanknc/igvc_ws/src/robot_description/meshes/hokuyo.dae"/>
+        <mesh filename="meshes/hokuyo.dae"/>
       </geometry>
     </visual>
 
@@ -315,7 +315,7 @@
         <odometryTopic>odom</odometryTopic>
         <odometryFrame>odom</odometryFrame>
         <odometryRate>20.0</odometryRate>
-        <robotBaseFrame>base_footprint</robotBaseFrame>
+        <robotBaseFrame>base_link</robotBaseFrame>
       </plugin>
     </gazebo>
 

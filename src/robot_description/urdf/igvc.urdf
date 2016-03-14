@@ -529,8 +529,8 @@
   <gazebo>
     <plugin filename="libgazebo_ros_planar_move.so" name="object_controller">
       <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+      <odometryTopic>odomTrash</odometryTopic>
+      <odometryFrame>odomTrash</odometryFrame>
       <odometryRate>20.0</odometryRate>
       <robotBaseFrame>base_link</robotBaseFrame>
     </plugin>

@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+PACKAGE='perception'
+import roslib
+roslib.load_manifest(PACKAGE)
+import rospy
+import cv2
+
+
+
+class NodeExample():
+    # Must have __init__(self) function for a class, similar to a C++ class constructor.
+    def __init__(self):
+        print "Well, we got here!"
+	
+if __name__ == '__main__':
+    # Initialize the node and name it.
+    rospy.init_node('testing')
+    # Go to class functions that do all the heavy lifting. Do error checking.
+    try:
+        ne = NodeExample()
+    except rospy.ROSInterruptException: pass
