@@ -1,0 +1,6 @@
+[submodule "src/zed-ros-wrapper"]
+	path = src/zed-ros-wrapper
+	url = https://github.com/stereolabs/zed-ros-wrapper.git
+[submodule "src/SpartonCompassIMU"]
+	path = src/SpartonCompassIMU
+	url = https://github.com/udmamrl/SpartonCompassIMU.git
