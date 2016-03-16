@@ -2,7 +2,7 @@
 
     <node pkg="nmea_navsat_driver" type="nmea_serial_driver" name="navsat" respawn="true" output="screen">
        <param name="port" value="/dev/ttyUSB0"/>
-       <param name="baud" value="4800"/>
+       <param name="baud" value="115200"/>
        <param name="useRMC" value="false"/>
     </node>
 
