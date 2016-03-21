@@ -1,15 +1,39 @@
+<!-- Based heavily on the example given at https://github.com/cra-ros-pkg/robot_localization/blob/indigo-devel/launch/navsat_transform_template.launch -->
+
 <launch>
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true" output="screen">
+    <!-- Frequency of running the main loop. -->
+    <param name="frequency" value="30" />
 
-    <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
+    <!-- Seconds waited before updating the world frame -->
+    <param name="delay" value="0" />
 
-      <param name="magnetic_declination_radians" value="0"/>
+    <!-- If the IMU doesn't account for magnetic declination, set the value for the location. -->
+    <param name="magnetic_declination_radians" value="0" />
+    
+    <!-- The IMU's yaw to displace it that 0 faces east. -->
+    <param name="yaw_offset" value="0" />  <!-- Was "remap." Not sure what it needs to be. -->
 
-      <param name="yaw_offset" value="0"/>
+    <!-- If true, altitude is always assumed 0 -->
+    <param name="zero_altitude" value="false" />
 
-      <!-- <remap from="/imu/data" to="/your/imu/topic" /> -->
-      <remap from="/gps/fix" to="/your/gps/fix/topic" />
-      <remap from="/odometry/filtered" to="/your/robot_localization/output/topic" />
+    <!-- Sets whether to bradcast the world_frame->utm to the world. -->
+    <param name="broadcast_utm_transform" value="false" />
 
-    </node>
+    <!-- Sets whether to broadcast a latitude-longitude pair. -->
+    <param name="published_filtered_gps" value="false" />
 
+    <!-- Sets whether to ignore the IMU data for its heading. -->
+    <param name="use_odometry_yaw" value="false" />
+
+    <!-- Sets whether to ignore the IMU data for its heading (again, but different). -->
+    <param name="wait_for_datum" value="false" />
+    
+    <!-- Remaps where to input from. -->
+    <remap from="/gps/fix" to="/fix" />
+    <remap from="/odometry/filtered" to="/your/robot_localization/output/topic" />
+
+    <!-- Set whether to print diagnostic information. -->
+    <param name="print_diagnostics" value="true" />
+  </node>
 </launch>

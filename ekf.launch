@@ -1,0 +1,50 @@
+<!-- Based heavily on the example given at https://github.com/cra-ros-pkg/robot_localization/blob/indigo-devel/launch/ekf_template.launch -->
+
+<launch>
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_node" respawn="true" output="screen">
+    <!-- The frequency at which the filter will output a position estimate. -->
+    <param name="frequency" value="30" />
+
+    <!-- The period after which the sensor is considered timed out. -->
+    <param name="sensor_timeout" value="0.1" />
+
+    <!-- Sets whether or not to care about 3D information. -->
+    <param name="two_d_mode" value="false" />
+
+    <!-- Specify three principle coordinate frames. -->
+    <param name="map_frame" value="map" />
+    <param name="odom_frame" value="odom" />
+    <param name="base_link_frame" value="base_link" />
+    <param name="world_frame" value="odom" />
+
+    <!-- Offset the time by the given amount. -->
+    <param name="transform_time_offset" value="0.0" />
+
+    <!-- Set the locations of the various input sensors. -->
+    <param name="imu0" value="/imu/data" />
+
+    <!-- Set whether to handle each of the given types of data from each sensor. This data being:
+         x     y      z
+         roll  pitch  yaw
+         vx    vy     vz
+         vroll vpitch vyaw
+         ax    ay     az
+    -->
+    <rosparam param="imu0_config">
+      [false, false, false,
+      true, true, true,
+      false, false, false,
+      true, true, true,
+      true, true, true]
+    </rosparam>
+
+    <!-- Sets whether to set the 0 to be the starting position. -->
+    <param name="imu0_relative" value="false" />
+
+    <!-- Set whether to factor out gravitational acceleration. -->
+    <param name="imu0_remove_gravitational_acceleration" value="true" />
+
+    <!-- Set whether to print diagnostic information. -->
+    <param name="print_diagnostics" value="false" />
+  </node>
+</launch>
