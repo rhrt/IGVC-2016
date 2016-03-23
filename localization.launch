@@ -31,7 +31,7 @@
     
     <!-- Remaps where to input from. -->
     <remap from="/gps/fix" to="/fix" />
-    <remap from="/odometry/filtered" to="/your/robot_localization/output/topic" />
+    <!-- <remap from="/odometry/filtered" to="/robot_localization" /> -->
 
     <!-- Set whether to print diagnostic information. -->
     <param name="print_diagnostics" value="true" />

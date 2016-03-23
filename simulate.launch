@@ -15,6 +15,7 @@
   <!-- urdf xml robot description loaded on the Parameter Server-->
   <!--param name="robot_description" command="$(find xacro)/xacro.py '$(find robot_description)/urdf/igvc.xacro'" /-->
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find robot_description)/urdf/igvc.xacro'" />
+  <node name="imu_transform" pkg="tf" type="static_transform_publisher" args=" 0 0 0 0 0 0 base_link SpartonCompassIMU 50"/>
   <!--node name="odomlink" pkg="tf" type="static_transform_publisher" args=" 0 0 0 0 0 0 map world 50"/-->
   <!-- <node name="odomlink" pkg="tf" type="static_transform_publisher" args=" 0 0 0 0 0 0 odom base_footprint 50"/> -->
 
