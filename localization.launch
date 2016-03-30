@@ -17,11 +17,11 @@
     <!-- If true, altitude is always assumed 0 -->
     <param name="zero_altitude" value="false" />
 
-    <!-- Sets whether to bradcast the world_frame->utm to the world. -->
+    <!-- Sets whether to broadcast the world_frame->utm to the world. -->
     <param name="broadcast_utm_transform" value="false" />
 
     <!-- Sets whether to broadcast a latitude-longitude pair. -->
-    <param name="published_filtered_gps" value="false" />
+    <param name="published_filtered_gps" value="true" />
 
     <!-- Sets whether to ignore the IMU data for its heading. -->
     <param name="use_odometry_yaw" value="false" />
@@ -31,7 +31,9 @@
     
     <!-- Remaps where to input from. -->
     <remap from="/gps/fix" to="/fix" />
-    <!-- <remap from="/odometry/filtered" to="/robot_localization" /> -->
+    <remap from="/imu/data" to="/imu/data" />
+    <remap from="/odometry/filtered" to="/odometry/filtered" />
+
 
     <!-- Set whether to print diagnostic information. -->
     <param name="print_diagnostics" value="true" />

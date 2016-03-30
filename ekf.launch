@@ -22,7 +22,8 @@
 
     <!-- Set the locations of the various input sensors. -->
     <param name="imu0" value="/imu/data" />
-    <param name="odom0" value="/odom" />
+    <param name="odom0" value="/odometry/gps" />
+    <!-- <param name="odom0" value="/odom" /> -->
 
     <!-- Set whether to handle each of the given types of data from each sensor. This data being:
          x     y      z
@@ -40,25 +41,34 @@
     </rosparam>
 
     <rosparam param="odom0_config">
-      [false, false, false,
+      [true, true, false,
       false, false, false,
-      true, false, false,
+      false, false, false,
       false, false, false,
       false, false, false]
     </rosparam>
 
+    <!-- <rosparam param="odom0_config"> -->
+    <!--   [false, false, false, -->
+    <!--   false, false, false, -->
+    <!--   true, false, false, -->
+    <!--   false, false, false, -->
+    <!--   false, false, false] -->
+    <!-- </rosparam> -->
+
     <!-- Allows calculation of velocity via differentiation of the measured position. -->
     <param name="imu0_differential" value="false" />
-    <param name="odom0_differential" value="true" />
+    <param name="odom0_differential" value="false" />
+    <!-- <param name="odom0_differential" value="true" /> -->
 
     <!-- Sets whether to set the 0 to be the starting position. -->
-    <param name="imu0_relative" value="true" /> <!-- May need to be changed to false eventually. -->
+    <param name="imu0_relative" value="false" />
     <param name="odom0_relative" value="false" />
 
     <!-- Set whether to factor out gravitational acceleration. -->
-    <param name="imu0_remove_gravitational_acceleration" value="true" />
+    <param name="imu0_remove_gravitational_acceleration" value="Set" />
 
-    <!-- Set whether to print diagnostic information. -->
+    <!-- true whether to print diagnostic information. -->
     <param name="print_diagnostics" value="true" />
   </node>
 </launch>
