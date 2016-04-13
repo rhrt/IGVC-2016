@@ -1,3 +1,4 @@
+<!-- -*- mode: xml -*- -->
 <!-- Based heavily on the example given at https://github.com/cra-ros-pkg/robot_localization/blob/indigo-devel/launch/navsat_transform_template.launch -->
 
 <launch>
